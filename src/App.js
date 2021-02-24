@@ -1,58 +1,50 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import { connect } from 'react-redux';
 import './App.css';
 
-function App() {
+import { addPost, destroyPost, addComment, destroyComment } from './redux/actions';
+
+function App(props) {
+  function handleClick(e) {
+    e.preventDefault();
+    props.addPost();
+  }
+
+  function destroy(id) {
+    props.destroyPost(id);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div>
+      <table>
+        <tbody>    
+          {
+            props.posts && props.posts.map((post) => (
+              <tr key={post.id}>
+                <td>{post.id}</td>
+                <td>{post.content}</td>
+                <td><a href='#' onClick={(e) => { e.preventDefault(); destroy(post.id); }}>destroy</a></td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <a href='#' onClick={handleClick}>Click here</a>
     </div>
   );
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    posts: state.posts.values,
+  };
+}
+
+const mapDispatchToProps = {
+  addPost,
+  destroyPost,
+  addComment,
+  destroyComment,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
